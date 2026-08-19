@@ -75,39 +75,16 @@ function RecipePage() {
   const progress =
     ((stepIndex + (phase === "done" ? 1 : 0)) / recipe.steps.length) * 100;
 
-  /*
-   * Hjälper till att hitta vilka ingredienser som hör till det aktuella steget.
-   * När vi senare lägger till exakta ingredienser per steg används dessa automatiskt.
-   */
-  const stepText = `${step.title} ${step.text}`.toLowerCase();
+  const stepIngredients =
+    step.ingredients && step.ingredients.length > 0
+      ? step.ingredients
+      : [];
 
-  const stepIngredients = recipe.ingredients.filter((ingredient) => {
-    const key = canonical(ingredient.key);
+  const stepTools =
+    step.tools && step.tools.length > 0
+      ? step.tools
+      : getToolsForStep(step.title, step.text);
 
-    const words = [
-      key,
-      key === "mjöl" ? "mjöl" : "",
-      key === "socker" ? "socker" : "",
-      key === "smör" ? "smör" : "",
-      key === "ägg" ? "ägg" : "",
-      key === "mjölk" ? "mjölk" : "",
-      key === "kakao" ? "kakao" : "",
-      key === "choklad" ? "choklad" : "",
-      key === "kanel" ? "kanel" : "",
-      key === "äpple" ? "äpple" : "",
-      key === "banan" ? "banan" : "",
-      key === "havregryn" ? "havregryn" : "",
-      key === "kokos" ? "kokos" : "",
-      key === "bakpulver" ? "bakpulver" : "",
-      key === "vaniljsocker" ? "vaniljsocker" : "",
-      key === "salt" ? "salt" : "",
-      key === "jäst" ? "jäst" : "",
-    ].filter(Boolean);
-
-    return words.some((word) => stepText.includes(word));
-  });
-
-  /* ---------- Översikt ---------- */
   if (phase === "overview") {
     return (
       <div className="min-h-screen bg-background pb-16">
@@ -152,15 +129,22 @@ function RecipePage() {
           </header>
 
           <section className="card-soft mt-5 p-5 sm:p-7">
-            <h2 className="text-xl font-semibold">Ingredienser</h2>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-semibold">Ingredienser</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Här ser du exakt vad receptet behöver.
+                </p>
+              </div>
+            </div>
 
-            <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
               {recipe.ingredients.map((ing) => {
                 const owned = have.has(canonical(ing.key));
 
                 return (
                   <li
-                    key={ing.key}
+                    key={`${ing.key}-${ing.amount}`}
                     className="flex items-center gap-2.5 rounded-xl bg-secondary/60 px-3 py-2.5"
                   >
                     <span
@@ -185,10 +169,25 @@ function RecipePage() {
             </ul>
           </section>
 
+          <div className="card-soft mt-4 flex gap-3 p-4">
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+              <ChefHat className="h-5 w-5" />
+            </div>
+
+            <div>
+              <p className="text-sm font-semibold">Redo för att baka?</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Bakskolan guidar dig genom varje steg och visar redskap,
+                mängder, tips och timers när du behöver dem.
+              </p>
+            </div>
+          </div>
+
           <button
             onClick={() => {
               setPhase("baking");
               setStepIndex(0);
+              window.scrollTo({ top: 0 });
             }}
             className="press mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-4 text-base font-semibold text-primary-foreground shadow-lift hover:bg-primary/90"
           >
@@ -200,7 +199,6 @@ function RecipePage() {
     );
   }
 
-  /* ---------- Bakläge ---------- */
   if (phase === "baking") {
     return (
       <div className="flex min-h-screen flex-col bg-background">
@@ -257,106 +255,137 @@ function RecipePage() {
             {step.title}
           </h1>
 
-          {/* Redskap */}
+          {/* REDSKAP */}
           <section className="card-soft mt-5 p-4 sm:p-5">
-            <div className="flex items-center gap-2">
-              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-                <Package className="h-4.5 w-4.5" />
+            <div className="flex items-center gap-3">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                <Package className="h-5 w-5" />
               </div>
 
               <div>
-                <p className="text-sm font-semibold">Du behöver</p>
+                <p className="font-semibold">Redskap du behöver</p>
                 <p className="text-xs text-muted-foreground">
-                  Redskap för det här steget
+                  Ta fram detta innan du börjar steget.
                 </p>
               </div>
             </div>
 
-            <div className="mt-3 flex flex-wrap gap-2">
-              {getToolsForStep(step.title, step.text).map((tool) => (
-                <span
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {stepTools.map((tool) => (
+                <div
                   key={tool}
-                  className="rounded-full bg-secondary px-3 py-1.5 text-sm"
+                  className="flex items-center rounded-xl bg-secondary px-3 py-2.5 text-sm font-medium"
                 >
                   {tool}
-                </span>
+                </div>
               ))}
             </div>
           </section>
 
-          {/* Ingredienser för just detta steg */}
+          {/* INGREDIENSER */}
           <section className="card-soft mt-3 p-4 sm:p-5">
-            <p className="text-sm font-semibold">Ingredienser i detta steg</p>
+            <div className="flex items-center gap-3">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-sage-soft text-sage">
+                <ChefHat className="h-5 w-5" />
+              </div>
+
+              <div>
+                <p className="font-semibold">Ingredienser i detta steg</p>
+                <p className="text-xs text-muted-foreground">
+                  Exakta mängder för just det du ska göra nu.
+                </p>
+              </div>
+            </div>
 
             {stepIngredients.length > 0 ? (
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <div className="mt-4 space-y-2">
                 {stepIngredients.map((ingredient) => (
                   <div
-                    key={ingredient.key}
-                    className="flex items-center justify-between gap-3 rounded-xl bg-secondary/60 px-3 py-2.5"
+                    key={`${ingredient.key}-${ingredient.amount}`}
+                    className="flex items-center justify-between gap-4 rounded-xl bg-secondary/70 px-3 py-3"
                   >
                     <span className="text-sm font-medium">
-                      {ingredient.key}
+                      {formatIngredientName(ingredient.key)}
                     </span>
 
-                    <span className="text-sm text-muted-foreground">
-                      {ingredient.amount
-                        .replace(ingredient.key, "")
-                        .trim() || ingredient.amount}
+                    <span className="shrink-0 text-sm font-semibold text-primary">
+                      {ingredient.amount}
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="mt-2 text-sm text-muted-foreground">
-                Följ mängderna från ingredienslistan ovan.
-              </p>
+              <div className="mt-4 rounded-xl bg-secondary/70 p-3">
+                <p className="text-sm text-muted-foreground">
+                  Inga extra ingredienser behöver mätas upp i just detta steg.
+                </p>
+              </div>
             )}
           </section>
 
-          {/* Själva instruktionen */}
-          <section className="mt-6">
-            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-              Gör så här
-            </p>
+          {/* INSTRUKTION */}
+          <section className="mt-7">
+            <div className="flex items-center gap-2">
+              <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">
+                GÖR SÅ HÄR
+              </span>
+            </div>
 
-            <p className="mt-2 text-lg leading-relaxed sm:text-xl">
-              {step.text}
-            </p>
+            <div className="mt-3 rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+              <p className="text-base leading-7 sm:text-lg sm:leading-8">
+                {step.text}
+              </p>
+            </div>
           </section>
 
+          {/* TIMER */}
           {step.timerSec ? (
-            <div className="mt-6">
+            <div className="mt-5">
               <Timer seconds={step.timerSec} label={step.title} />
             </div>
           ) : null}
 
+          {/* VARFÖR */}
           {step.why ? (
-            <div className="card-soft mt-5 bg-sage-soft/60 p-4">
+            <section className="card-soft mt-5 bg-sage-soft/60 p-4 sm:p-5">
               <p className="text-sm font-semibold">💡 Varför gör vi så?</p>
 
-              <p className="mt-1 text-sm leading-relaxed">
-                {step.why}
-              </p>
-            </div>
+              <p className="mt-2 text-sm leading-6">{step.why}</p>
+            </section>
           ) : null}
 
+          {/* TIPS */}
           {step.tip && state.settings.showTips ? (
-            <div className="card-soft mt-3 bg-accent/70 p-4">
+            <section className="card-soft mt-3 bg-accent/70 p-4 sm:p-5">
               <p className="flex items-center gap-1.5 text-sm font-semibold text-accent-foreground">
                 <Lightbulb className="h-4 w-4" />
                 Bakproffs-tipset
               </p>
 
-              <p className="mt-1 text-sm leading-relaxed text-accent-foreground">
+              <p className="mt-2 text-sm leading-6 text-accent-foreground">
                 {step.tip.replace("👨‍🍳 ", "")}
               </p>
-            </div>
+            </section>
           ) : null}
         </main>
 
-        <div className="safe-bottom sticky bottom-0 border-t border-border bg-card/95 pt-3 backdrop-blur">
-          <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
+        {/* NAVIGATION */}
+        <div className="safe-bottom sticky bottom-0 z-20 border-t border-border bg-card/95 pt-3 backdrop-blur">
+          <div className="mx-auto flex w-full max-w-3xl gap-2 px-4 pb-3 sm:px-6">
+            <button
+              onClick={() => {
+                if (stepIndex === 0) {
+                  setPhase("overview");
+                } else {
+                  setStepIndex((i) => i - 1);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
+              className="press flex min-w-0 flex-1 items-center justify-center rounded-full border border-border bg-background px-4 py-3.5 text-sm font-semibold hover:bg-secondary"
+            >
+              ← Föregående
+            </button>
+
             <button
               onClick={() => {
                 if (stepIndex + 1 < recipe.steps.length) {
@@ -364,12 +393,13 @@ function RecipePage() {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 } else {
                   setPhase("done");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
                 }
               }}
-              className="press inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-4 text-base font-semibold text-primary-foreground shadow-lift hover:bg-primary/90"
+              className="press flex min-w-0 flex-[1.5] items-center justify-center rounded-full bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground shadow-lift hover:bg-primary/90"
             >
               {stepIndex + 1 < recipe.steps.length
-                ? "Jag är klar →"
+                ? "Nästa steg →"
                 : "Sista steget klart 🎉"}
             </button>
           </div>
@@ -378,7 +408,6 @@ function RecipePage() {
     );
   }
 
-  /* ---------- Sparad ---------- */
   if (phase === "saved") {
     return (
       <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-4 text-center">
@@ -411,7 +440,6 @@ function RecipePage() {
     );
   }
 
-  /* ---------- Klar ---------- */
   return (
     <div className="min-h-screen bg-background">
       <div className="rise mx-auto w-full max-w-2xl px-4 py-8 sm:px-6 sm:py-12">
@@ -450,9 +478,7 @@ function RecipePage() {
           </div>
 
           <label className="mt-6 block">
-            <span className="text-base font-semibold">
-              Din anteckning
-            </span>
+            <span className="text-base font-semibold">Din anteckning</span>
 
             <textarea
               value={note}
@@ -464,9 +490,7 @@ function RecipePage() {
           </label>
 
           <div className="mt-4">
-            <p className="text-base font-semibold">
-              Bild på resultatet
-            </p>
+            <p className="text-base font-semibold">Bild på resultatet</p>
 
             <input
               ref={fileRef}
@@ -532,14 +556,36 @@ function RecipePage() {
   );
 }
 
-/**
- * Ger varje steg relevanta redskap.
- * Detta fungerar redan nu och vi kan göra det ännu mer exakt
- * när varje receptsteg får en egen redskapslista.
- */
+function formatIngredientName(key: string): string {
+  const names: Record<string, string> = {
+    mjöl: "Mjöl",
+    socker: "Socker",
+    smör: "Smör",
+    ägg: "Ägg",
+    mjölk: "Mjölk",
+    kakao: "Kakao",
+    vaniljsocker: "Vaniljsocker",
+    bakpulver: "Bakpulver",
+    salt: "Salt",
+    choklad: "Choklad",
+    havregryn: "Havregryn",
+    kanel: "Kanel",
+    jäst: "Jäst",
+    äpple: "Äpple",
+    banan: "Banan",
+    kokos: "Kokos",
+    florsocker: "Florsocker",
+    grädde: "Grädde",
+    olja: "Olja",
+    kaffe: "Kaffe",
+    morot: "Morot",
+  };
+
+  return names[key] ?? key.charAt(0).toUpperCase() + key.slice(1);
+}
+
 function getToolsForStep(title: string, text: string): string[] {
   const content = `${title} ${text}`.toLowerCase();
-
   const tools: string[] = [];
 
   if (
@@ -562,12 +608,13 @@ function getToolsForStep(title: string, text: string): string[] {
     tools.push("🥄 Visp");
   }
 
-  if (content.includes("smält") || content.includes("smör")) {
-    tools.push("🍴 Kastrull");
+  if (content.includes("smält")) {
+    tools.push("🍳 Kastrull");
+    tools.push("🔥 Spis");
   }
 
   if (content.includes("kavla")) {
-    tools.push("🥖 Kavel");
+    tools.push("🪵 Kavel");
   }
 
   if (content.includes("skiv") || content.includes("hack")) {
@@ -579,8 +626,8 @@ function getToolsForStep(title: string, text: string): string[] {
     tools.push("🍰 Bakform");
   }
 
-  if (content.includes("plåt") || content.includes("bakplåt")) {
-    tools.push("🍪 Bakplåt");
+  if (content.includes("plåt")) {
+    tools.push("🍪 Plåt");
   }
 
   if (content.includes("bakplåtspapper")) {
