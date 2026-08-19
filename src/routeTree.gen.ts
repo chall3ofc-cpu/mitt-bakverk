@@ -12,8 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BakaRouteImport } from './routes/baka'
 import { Route as BakbokRouteImport } from './routes/bakbok'
+import { Route as LarDigRouteImport } from './routes/lar-dig'
+import { Route as ProfilRouteImport } from './routes/profil'
 import { Route as BakaIndexRouteImport } from './routes/baka.index'
 import { Route as BakaSlugRouteImport } from './routes/baka.$slug'
+import { Route as LarDigIndexRouteImport } from './routes/lar-dig.index'
+import { Route as LarDigSlugRouteImport } from './routes/lar-dig.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +34,16 @@ const BakbokRoute = BakbokRouteImport.update({
   path: '/bakbok',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LarDigRoute = LarDigRouteImport.update({
+  id: '/lar-dig',
+  path: '/lar-dig',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfilRoute = ProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BakaIndexRoute = BakaIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -40,40 +54,89 @@ const BakaSlugRoute = BakaSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BakaRoute,
 } as any)
+const LarDigIndexRoute = LarDigIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LarDigRoute,
+} as any)
+const LarDigSlugRoute = LarDigSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => LarDigRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/baka': typeof BakaRouteWithChildren
   '/bakbok': typeof BakbokRoute
+  '/lar-dig': typeof LarDigRouteWithChildren
+  '/profil': typeof ProfilRoute
   '/baka/$slug': typeof BakaSlugRoute
+  '/lar-dig/$slug': typeof LarDigSlugRoute
   '/baka/': typeof BakaIndexRoute
+  '/lar-dig/': typeof LarDigIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bakbok': typeof BakbokRoute
+  '/profil': typeof ProfilRoute
   '/baka/$slug': typeof BakaSlugRoute
+  '/lar-dig/$slug': typeof LarDigSlugRoute
   '/baka': typeof BakaIndexRoute
+  '/lar-dig': typeof LarDigIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/baka': typeof BakaRouteWithChildren
   '/bakbok': typeof BakbokRoute
+  '/lar-dig': typeof LarDigRouteWithChildren
+  '/profil': typeof ProfilRoute
   '/baka/$slug': typeof BakaSlugRoute
+  '/lar-dig/$slug': typeof LarDigSlugRoute
   '/baka/': typeof BakaIndexRoute
+  '/lar-dig/': typeof LarDigIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/baka' | '/bakbok' | '/baka/$slug' | '/baka/'
+  fullPaths:
+    | '/'
+    | '/baka'
+    | '/bakbok'
+    | '/lar-dig'
+    | '/profil'
+    | '/baka/$slug'
+    | '/lar-dig/$slug'
+    | '/baka/'
+    | '/lar-dig/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bakbok' | '/baka/$slug' | '/baka'
-  id: '__root__' | '/' | '/baka' | '/bakbok' | '/baka/$slug' | '/baka/'
+  to:
+    | '/'
+    | '/bakbok'
+    | '/profil'
+    | '/baka/$slug'
+    | '/lar-dig/$slug'
+    | '/baka'
+    | '/lar-dig'
+  id:
+    | '__root__'
+    | '/'
+    | '/baka'
+    | '/bakbok'
+    | '/lar-dig'
+    | '/profil'
+    | '/baka/$slug'
+    | '/lar-dig/$slug'
+    | '/baka/'
+    | '/lar-dig/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BakaRoute: typeof BakaRouteWithChildren
   BakbokRoute: typeof BakbokRoute
+  LarDigRoute: typeof LarDigRouteWithChildren
+  ProfilRoute: typeof ProfilRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +162,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BakbokRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lar-dig': {
+      id: '/lar-dig'
+      path: '/lar-dig'
+      fullPath: '/lar-dig'
+      preLoaderRoute: typeof LarDigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profil': {
+      id: '/profil'
+      path: '/profil'
+      fullPath: '/profil'
+      preLoaderRoute: typeof ProfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/baka/': {
       id: '/baka/'
       path: '/'
@@ -112,6 +189,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/baka/$slug'
       preLoaderRoute: typeof BakaSlugRouteImport
       parentRoute: typeof BakaRoute
+    }
+    '/lar-dig/': {
+      id: '/lar-dig/'
+      path: '/'
+      fullPath: '/lar-dig/'
+      preLoaderRoute: typeof LarDigIndexRouteImport
+      parentRoute: typeof LarDigRoute
+    }
+    '/lar-dig/$slug': {
+      id: '/lar-dig/$slug'
+      path: '/$slug'
+      fullPath: '/lar-dig/$slug'
+      preLoaderRoute: typeof LarDigSlugRouteImport
+      parentRoute: typeof LarDigRoute
     }
   }
 }
@@ -128,10 +219,25 @@ const BakaRouteChildren: BakaRouteChildren = {
 
 const BakaRouteWithChildren = BakaRoute._addFileChildren(BakaRouteChildren)
 
+interface LarDigRouteChildren {
+  LarDigSlugRoute: typeof LarDigSlugRoute
+  LarDigIndexRoute: typeof LarDigIndexRoute
+}
+
+const LarDigRouteChildren: LarDigRouteChildren = {
+  LarDigSlugRoute: LarDigSlugRoute,
+  LarDigIndexRoute: LarDigIndexRoute,
+}
+
+const LarDigRouteWithChildren =
+  LarDigRoute._addFileChildren(LarDigRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BakaRoute: BakaRouteWithChildren,
   BakbokRoute: BakbokRoute,
+  LarDigRoute: LarDigRouteWithChildren,
+  ProfilRoute: ProfilRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
