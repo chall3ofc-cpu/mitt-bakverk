@@ -10,33 +10,51 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BakaRouteImport } from './routes/baka'
+import { Route as BakaIndexRouteImport } from './routes/baka.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BakaRoute = BakaRouteImport.update({
+  id: '/baka',
+  path: '/baka',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BakaIndexRoute = BakaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BakaRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/baka': typeof BakaRouteWithChildren
+  '/baka/': typeof BakaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/baka': typeof BakaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/baka': typeof BakaRouteWithChildren
+  '/baka/': typeof BakaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/baka' | '/baka/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/baka'
+  id: '__root__' | '/' | '/baka' | '/baka/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BakaRoute: typeof BakaRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +66,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/baka': {
+      id: '/baka'
+      path: '/baka'
+      fullPath: '/baka'
+      preLoaderRoute: typeof BakaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/baka/': {
+      id: '/baka/'
+      path: '/'
+      fullPath: '/baka/'
+      preLoaderRoute: typeof BakaIndexRouteImport
+      parentRoute: typeof BakaRoute
+    }
   }
 }
 
+interface BakaRouteChildren {
+  BakaIndexRoute: typeof BakaIndexRoute
+}
+
+const BakaRouteChildren: BakaRouteChildren = {
+  BakaIndexRoute: BakaIndexRoute,
+}
+
+const BakaRouteWithChildren = BakaRoute._addFileChildren(BakaRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BakaRoute: BakaRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
