@@ -1,28 +1,22 @@
 export type Step = {
   title: string;
   text: string;
-
-  /** Ingredienser som används specifikt i detta steg */
-  ingredients?: {
-    name: string;
-    amount: string;
-  }[];
-
-  /** Redskap som behövs specifikt i detta steg */
-  tools?: string[];
-
-  /** Förvärmning/temperatur som hör till steget */
-  temperature?: string;
-
   why?: string;
   tip?: string;
   timerSec?: number;
+
+  /** Exakta redskap som behövs i just detta steg */
+  tools?: string[];
+
+  /** Exakta ingredienser och mängder som används i just detta steg */
+  ingredients?: {
+    key: string;
+    amount: string;
+  }[];
 };
 
 export type Ingredient = {
-  /** Normaliserat nyckelnamn som matchas mot skafferiet */
   key: string;
-  /** Visningsnamn med mängd */
   amount: string;
 };
 
@@ -38,7 +32,6 @@ export type Recipe = {
   steps: Step[];
 };
 
-/** Vanliga ingredienser som visas som chips */
 export const COMMON_INGREDIENTS = [
   "mjöl",
   "socker",
@@ -76,7 +69,7 @@ export const RECIPES: Recipe[] = [
       { key: "smör", amount: "100 g smör" },
       { key: "socker", amount: "2,5 dl socker" },
       { key: "ägg", amount: "2 ägg" },
-      { key: "mjöl", amount: "1,5 dl vetemjöl" },
+      { key: "mjöl", amount: "1,5 dl mjöl" },
       { key: "kakao", amount: "3 msk kakao" },
       { key: "vaniljsocker", amount: "1 tsk vaniljsocker" },
       { key: "salt", amount: "1 krm salt" },
@@ -84,64 +77,68 @@ export const RECIPES: Recipe[] = [
 
     steps: [
       {
-        title: "Förbered ugnen och formen",
-        text: "Sätt ugnen på 175°C. Smörj en form på cirka 20 cm och bröa den lätt. Placera gallret i mitten av ugnen.",
-        tools: ["Ugn", "Rund bakform, ca 20 cm", "Pensel eller smörkniv"],
-        temperature: "175°C",
-        why: "En ordentligt förvärmd ugn gör att kakan börjar sätta sig direkt och hjälper mitten att behålla sin kladdiga konsistens.",
-        tip: "Använd gärna en form med ljus botten. Mörka formar kan göra att kanterna blir klara snabbare.",
+        title: "Sätt ugnen på 175°C",
+        text: "Smörj en form på cirka 20 cm och bröa den. Placera ugnsgallret i mitten av ugnen.",
+        tools: ["🔥 Ugn", "🍰 Rund bakform", "🖌️ Bakpensel", "🥄 Matsked"],
+        ingredients: [
+          { key: "smör", amount: "lite till formen" },
+        ],
+        why: "En förvärmd ugn gör att kakan stelnar i kanterna direkt och behåller den kladdiga mitten.",
+        tip: "Använd gärna en form med ljus botten eftersom mörka formar kan ge snabbare gräddning i kanterna.",
       },
+
       {
         title: "Smält smöret",
-        text: "Smält smöret försiktigt i en kastrull eller mikrovågsugn. Låt det svalna någon minut.",
+        text: "Smält smöret försiktigt i en kastrull på låg värme. Ta bort kastrullen från värmen och låt smöret svalna någon minut.",
+        tools: ["🍴 Kastrull", "🔥 Spis", "🥄 Träslev"],
         ingredients: [
-          { name: "Smör", amount: "100 g" },
+          { key: "smör", amount: "100 g" },
         ],
-        tools: ["Kastrull eller mikrovågsugn", "Matsked"],
-        why: "Om smöret är väldigt varmt när det blandas med äggen kan äggen börja koagulera och smeten bli grynig.",
-        tip: "Smöret behöver inte vara kallt – bara inte rykande varmt.",
+        why: "Om smöret är mycket varmt kan det påverka äggen senare och ge en grynig smet.",
       },
+
       {
-        title: "Rör ihop ägg och socker",
-        text: "Rör ihop ägg och socker till en jämn blandning. Vispa inte upp smeten fluffig.",
+        title: "Rör ihop socker och ägg",
+        text: "Lägg äggen och sockret i en bunke och vispa lätt tills blandningen är jämn. Vispa inte luftigt.",
+        tools: ["🥣 Bunke", "🥄 Handvisp"],
         ingredients: [
-          { name: "Ägg", amount: "2 st" },
-          { name: "Socker", amount: "2,5 dl" },
+          { key: "ägg", amount: "2 ägg" },
+          { key: "socker", amount: "2,5 dl" },
         ],
-        tools: ["Stor bunke", "Visp"],
-        why: "Kladdkaka ska vara kompakt och kladdig. Om du vispar in mycket luft riskerar du att få en luftigare kaka.",
-        tip: "Här räcker det att blanda tills ägg och socker gått ihop.",
+        why: "Kladdkaka ska vara kompakt och kladdig. Om du vispar in mycket luft kan den bli mer lik en sockerkaka.",
+        tip: "👨‍🍳 Använd inte elvisp på hög hastighet – vanlig handvisp räcker.",
       },
+
       {
-        title: "Blanda de torra ingredienserna",
-        text: "Sikta ner mjöl, kakao, vaniljsocker och salt. Rör försiktigt tills nästan alla torra delar har blandats in.",
+        title: "Blanda ner det torra",
+        text: "Sikta ner mjöl, kakao, vaniljsocker och salt. Rör försiktigt ihop tills du har en jämn smet.",
+        tools: ["🥣 Bunke", "🥄 Sikt", "🥄 Slickepott"],
         ingredients: [
-          { name: "Vetemjöl", amount: "1,5 dl" },
-          { name: "Kakao", amount: "3 msk" },
-          { name: "Vaniljsocker", amount: "1 tsk" },
-          { name: "Salt", amount: "1 krm" },
+          { key: "mjöl", amount: "1,5 dl" },
+          { key: "kakao", amount: "3 msk" },
+          { key: "vaniljsocker", amount: "1 tsk" },
+          { key: "salt", amount: "1 krm" },
         ],
-        tools: ["Finmaskig sil eller mjölsikt", "Slickepott"],
-        why: "Att sikta kakaon minskar risken för klumpar och ger en jämnare smet.",
+        why: "Siktad kakao minskar risken för klumpar och ger en jämnare smet.",
       },
+
       {
         title: "Rör ner smöret",
-        text: "Häll ner det avsvalnade smöret och rör försiktigt tills smeten precis är jämn.",
+        text: "Häll ner det smälta, något avsvalnade smöret och rör försiktigt tills smeten är helt jämn.",
+        tools: ["🥣 Bunke", "🥄 Slickepott"],
         ingredients: [
-          { name: "Smält smör", amount: "100 g" },
+          { key: "smör", amount: "100 g smält" },
         ],
-        tools: ["Slickepott eller visp"],
-        why: "Ju mindre du arbetar smeten efter att mjölet kommit i, desto större chans att kakan blir härligt kladdig.",
-        tip: "Sluta röra så fort du inte längre ser torra mjölfickor.",
       },
+
       {
-        title: "Grädda kakan",
-        text: "Häll smeten i formen och grädda mitt i ugnen. Ytan ska ha börjat spricka och mitten ska fortfarande röra sig lite när du försiktigt skakar formen.",
-        tools: ["Bakform", "Ugn", "Grytvantar"],
-        temperature: "175°C",
+        title: "Grädda 15–17 minuter",
+        text: "Häll smeten i formen och grädda mitt i ugnen. Ytan ska ha stelnat men mitten ska fortfarande röra sig lite.",
+        tools: ["🍰 Bakform", "🔥 Ugn", "🧤 Grytvante"],
+        ingredients: [],
         timerSec: 900,
-        why: "Kakan fortsätter att sätta sig när den svalnar. Om du väntar tills mitten känns helt fast i ugnen blir resultatet lätt torrt.",
-        tip: "Låt kakan svalna ordentligt om du vill ha riktigt tydlig kladdighet.",
+        why: "Kakan fortsätter att stelna efter att den kommit ut ur ugnen. Därför ska mitten fortfarande vara lite lös.",
+        tip: "👨‍🍳 Låt kakan svalna minst en timme för extra perfekt kladdighet.",
       },
     ],
   },
@@ -150,7 +147,7 @@ export const RECIPES: Recipe[] = [
     slug: "chokladcookies",
     name: "Chokladcookies",
     emoji: "🍪",
-    description: "Sega i mitten, krispiga i kanten och fulla av choklad.",
+    description: "Sega i mitten, krispiga i kanten, fulla av chokladsmältor.",
     minutes: 35,
     difficulty: "Lätt",
     portions: "16 cookies",
@@ -159,7 +156,7 @@ export const RECIPES: Recipe[] = [
       { key: "smör", amount: "125 g smör" },
       { key: "socker", amount: "2 dl socker" },
       { key: "ägg", amount: "1 ägg" },
-      { key: "mjöl", amount: "4 dl vetemjöl" },
+      { key: "mjöl", amount: "4 dl mjöl" },
       { key: "bakpulver", amount: "1 tsk bakpulver" },
       { key: "choklad", amount: "150 g mörk choklad" },
       { key: "salt", amount: "0,5 tsk salt" },
@@ -169,63 +166,67 @@ export const RECIPES: Recipe[] = [
       {
         title: "Förbered ugnen",
         text: "Värm ugnen till 200°C och lägg bakplåtspapper på en plåt.",
-        tools: ["Ugn", "Plåt", "Bakplåtspapper"],
-        temperature: "200°C",
+        tools: ["🔥 Ugn", "🍪 Bakplåt", "📄 Bakplåtspapper"],
+        ingredients: [],
       },
+
       {
         title: "Rör smör och socker",
-        text: "Rör det rumsvarma smöret tillsammans med sockret tills blandningen blir mjuk och krämig.",
+        text: "Rör det rumsvarma smöret tillsammans med sockret i cirka 2–3 minuter.",
+        tools: ["🥣 Bunke", "🥄 Träslev eller elvisp"],
         ingredients: [
-          { name: "Smör", amount: "125 g, rumsvarmt" },
-          { name: "Socker", amount: "2 dl" },
+          { key: "smör", amount: "125 g, rumsvarmt" },
+          { key: "socker", amount: "2 dl" },
         ],
-        tools: ["Stor bunke", "Elvisp eller träslev"],
-        why: "När smöret arbetas med sockret skapas en struktur som hjälper kakorna att få rätt konsistens.",
-        tip: "Smöret ska vara mjukt men inte smält.",
+        why: "Sockret hjälper till att skapa små luftfickor i smöret som ger kakorna en bra struktur.",
       },
+
       {
         title: "Tillsätt ägget",
-        text: "Rör ner ägget tills smeten är jämn.",
+        text: "Rör ner ägget tills blandningen är jämn.",
+        tools: ["🥣 Bunke", "🥄 Slickepott"],
         ingredients: [
-          { name: "Ägg", amount: "1 st" },
+          { key: "ägg", amount: "1 ägg" },
         ],
-        tools: ["Visp eller slickepott"],
       },
+
       {
-        title: "Blanda de torra ingredienserna",
+        title: "Blanda det torra",
         text: "Blanda mjöl, bakpulver och salt i en separat skål. Rör sedan ner blandningen i smeten.",
+        tools: ["🥣 Bunke", "🥣 Liten skål", "🥄 Slickepott"],
         ingredients: [
-          { name: "Vetemjöl", amount: "4 dl" },
-          { name: "Bakpulver", amount: "1 tsk" },
-          { name: "Salt", amount: "0,5 tsk" },
+          { key: "mjöl", amount: "4 dl" },
+          { key: "bakpulver", amount: "1 tsk" },
+          { key: "salt", amount: "0,5 tsk" },
         ],
-        tools: ["Mellanstor skål", "Måttsats", "Slickepott"],
-        why: "Genom att blanda bakpulvret med mjölet först sprids det jämnare i degen.",
       },
+
       {
-        title: "Vänd ner chokladen",
+        title: "Tillsätt chokladen",
         text: "Hacka chokladen grovt och vänd ner den i degen.",
+        tools: ["🔪 Kniv", "🪵 Skärbräda", "🥣 Bunke", "🥄 Slickepott"],
         ingredients: [
-          { name: "Mörk choklad", amount: "150 g" },
+          { key: "choklad", amount: "150 g" },
         ],
-        tools: ["Skärbräda", "Kniv", "Slickepott"],
-        why: "Grovhackad choklad ger både små bitar och större smältor i de färdiga kakorna.",
-        tip: "Spara gärna några större chokladbitar till att trycka ovanpå kakorna före gräddning.",
+        why: "Grovhackad choklad ger både små och stora smältor i kakorna.",
       },
+
       {
         title: "Kyl degen",
-        text: "Låt degen vila i kylskåpet i cirka 15 minuter.",
-        tools: ["Kylskåp", "Bunke eller tallrik"],
+        text: "Ställ degen i kylskåpet i cirka 15 minuter medan ugnen värms upp.",
+        tools: ["🥣 Bunke", "❄️ Kylskåp"],
+        ingredients: [],
         timerSec: 900,
-        why: "Kall deg håller formen bättre i ugnen och ger tjockare, segare cookies.",
+        why: "Kall deg flyter ut mindre i ugnen och ger tjockare och segare cookies.",
       },
+
       {
-        title: "Grädda kakorna",
-        text: "Forma ungefär 16 bollar och placera dem med ordentligt mellanrum på plåten. Grädda tills kanterna är gyllene men mitten fortfarande ser lite mjuk ut.",
-        tools: ["Plåt", "Bakplåtspapper", "Sked eller glasskopa", "Ugn", "Grytvantar"],
-        temperature: "200°C",
+        title: "Grädda 9–11 minuter",
+        text: "Forma små bollar och lägg dem med gott om mellanrum på plåten. Grädda tills kanterna är gyllene.",
+        tools: ["🍪 Bakplåt", "📄 Bakplåtspapper", "🥄 Matsked", "🔥 Ugn", "🧤 Grytvante"],
+        ingredients: [],
         timerSec: 600,
-        tip: "Ta hellre ut kakorna lite för tidigt än lite för sent. De fortsätter att stelna på den varma plåten.",
+        tip: "👨‍🍳 Mitten får gärna se lite obakad ut när du tar ut dem. De stelnar på plåten.",
       },
     ],
   },
@@ -243,7 +244,7 @@ export const RECIPES: Recipe[] = [
       { key: "smör", amount: "100 g smör" },
       { key: "socker", amount: "2 dl socker" },
       { key: "ägg", amount: "2 ägg" },
-      { key: "mjöl", amount: "3 dl vetemjöl" },
+      { key: "mjöl", amount: "3 dl mjöl" },
       { key: "kakao", amount: "3 msk kakao" },
       { key: "bakpulver", amount: "2 tsk bakpulver" },
       { key: "mjölk", amount: "1 dl mjölk" },
@@ -251,174 +252,68 @@ export const RECIPES: Recipe[] = [
 
     steps: [
       {
-        title: "Värm ugnen",
-        text: "Värm ugnen till 200°C och placera 12 muffinsformar i en muffinsplåt.",
-        tools: ["Ugn", "Muffinsplåt", "12 muffinsformar"],
-        temperature: "200°C",
-        why: "En ordentligt varm ugn hjälper muffinsarna att resa sig snabbt och få en fin topp.",
+        title: "Värm ugnen till 200°C",
+        text: "Värm ugnen till 200°C och ställ fram 12 muffinsformar i en muffinsplåt.",
+        tools: ["🔥 Ugn", "🧁 Muffinsplåt", "🧁 12 muffinsformar"],
+        ingredients: [],
+        why: "Hög värme i början hjälper muffinsen att få en fin kupol.",
       },
+
       {
-        title: "Förbered smöret",
-        text: "Smält smöret försiktigt och låt det svalna lite.",
+        title: "Smält smöret",
+        text: "Smält smöret försiktigt och låt det svalna något.",
+        tools: ["🍴 Kastrull", "🔥 Spis", "🥄 Träslev"],
         ingredients: [
-          { name: "Smör", amount: "100 g" },
+          { key: "smör", amount: "100 g" },
         ],
-        tools: ["Kastrull eller mikrovågsugn", "Mått"],
       },
+
       {
         title: "Blanda ägg och socker",
-        text: "Vispa ihop ägg och socker tills blandningen är jämn.",
+        text: "Vispa ägg och socker lätt tills blandningen är jämn.",
+        tools: ["🥣 Bunke", "🥄 Handvisp"],
         ingredients: [
-          { name: "Ägg", amount: "2 st" },
-          { name: "Socker", amount: "2 dl" },
+          { key: "ägg", amount: "2 ägg" },
+          { key: "socker", amount: "2 dl" },
         ],
-        tools: ["Stor bunke", "Visp"],
       },
+
       {
-        title: "Blanda de torra ingredienserna",
+        title: "Blanda det torra",
         text: "Blanda mjöl, kakao och bakpulver i en separat skål.",
+        tools: ["🥣 Liten skål", "🥄 Matsked", "🥄 Tesked"],
         ingredients: [
-          { name: "Vetemjöl", amount: "3 dl" },
-          { name: "Kakao", amount: "3 msk" },
-          { name: "Bakpulver", amount: "2 tsk" },
+          { key: "mjöl", amount: "3 dl" },
+          { key: "kakao", amount: "3 msk" },
+          { key: "bakpulver", amount: "2 tsk" },
         ],
-        tools: ["Mellanstor skål", "Visp eller sked"],
       },
+
       {
         title: "Blanda smeten",
-        text: "Rör ner smör och mjölk i äggblandningen. Vänd sedan ner de torra ingredienserna och blanda bara tills smeten precis gått ihop.",
+        text: "Rör ner det torra växelvis med mjölken. Tillsätt det smälta smöret och rör bara tills smeten går ihop.",
+        tools: ["🥣 Stor bunke", "🥄 Slickepott", "🥄 Måttkopp"],
         ingredients: [
-          { name: "Mjölk", amount: "1 dl" },
-          { name: "Smält smör", amount: "100 g" },
+          { key: "mjölk", amount: "1 dl" },
+          { key: "smör", amount: "100 g smält" },
         ],
-        tools: ["Slickepott", "Måttkanna"],
-        why: "För mycket blandning efter att mjölet tillsatts kan utveckla gluten och göra muffinsarna kompakta.",
-        tip: "Några små mjölklumpar är bättre än en överarbetad smet.",
+        why: "Om du blandar för länge utvecklas gluten och muffinsen kan bli sega.",
       },
+
       {
         title: "Fyll formarna",
-        text: "Fördela smeten i formarna. Fyll varje form ungefär till två tredjedelar.",
-        tools: ["Sked eller glasskopa", "Muffinsplåt"],
-        tip: "En glasskopa gör det lättare att få lika stora muffins.",
+        text: "Fördela smeten i 12 muffinsformar. Fyll varje form ungefär två tredjedelar.",
+        tools: ["🧁 Muffinsplåt", "🧁 Muffinsformar", "🥄 Sked eller glasskopa"],
+        ingredients: [],
       },
+
       {
-        title: "Grädda",
-        text: "Grädda mitt i ugnen tills muffinsarna har rest sig och en provsticka kommer ut med några fuktiga smulor.",
-        tools: ["Ugn", "Grytvantar", "Provsticka"],
-        temperature: "200°C",
+        title: "Grädda 15 minuter",
+        text: "Grädda mitt i ugnen i cirka 15 minuter.",
+        tools: ["🔥 Ugn", "🧤 Grytvante", "🪵 Provsticka"],
+        ingredients: [],
         timerSec: 900,
-        tip: "Fuktiga smulor är bra. Helt torr sticka kan betyda att muffinsarna redan blivit lite för länge i ugnen.",
-      },
-    ],
-  },
-
-  {
-    slug: "kanelbullar",
-    name: "Kanelbullar",
-    emoji: "🌀",
-    description: "Klassiska jästa bullar med smör, socker och kanel.",
-    minutes: 120,
-    difficulty: "Medel",
-    portions: "20 bullar",
-
-    ingredients: [
-      { key: "mjölk", amount: "3 dl mjölk" },
-      { key: "jäst", amount: "25 g färsk jäst" },
-      { key: "smör", amount: "100 g smör" },
-      { key: "socker", amount: "1 dl socker" },
-      { key: "mjöl", amount: "9 dl vetemjöl" },
-      { key: "kanel", amount: "2 msk kanel" },
-      { key: "salt", amount: "0,5 tsk salt" },
-      { key: "ägg", amount: "1 ägg till pensling" },
-    ],
-
-    steps: [
-      {
-        title: "Värm mjölken",
-        text: "Värm mjölken till ungefär 37°C. Smält smöret och blanda med mjölken.",
-        ingredients: [
-          { name: "Mjölk", amount: "3 dl" },
-          { name: "Smör", amount: "100 g" },
-        ],
-        tools: ["Kastrull", "Kökstermometer"],
-        temperature: "37°C",
-        why: "Jäst trivs bra runt fingervarm temperatur. För varm vätska kan skada jästen.",
-        tip: "Saknar du termometer ska vätskan kännas ungefär fingervarm, inte het.",
-      },
-      {
-        title: "Blanda jäst och vätska",
-        text: "Smula jästen i en stor bunke. Häll över lite av vätskan och rör tills jästen lösts upp. Tillsätt resten.",
-        ingredients: [
-          { name: "Färsk jäst", amount: "25 g" },
-        ],
-        tools: ["Stor bunke", "Träslev eller visp"],
-      },
-      {
-        title: "Tillsätt socker och salt",
-        text: "Rör ner socker och salt i vätskan.",
-        ingredients: [
-          { name: "Socker", amount: "1 dl" },
-          { name: "Salt", amount: "0,5 tsk" },
-        ],
-        tools: ["Måttsats", "Träslev"],
-      },
-      {
-        title: "Arbeta in mjölet",
-        text: "Tillsätt mjölet lite i taget och arbeta degen tills den är smidig och börjar släppa från skålens kanter.",
-        ingredients: [
-          { name: "Vetemjöl", amount: "9 dl" },
-        ],
-        tools: ["Stor bunke", "Träslev eller köksmaskin"],
-        why: "När degen knådas utvecklas gluten som fungerar som ett nätverk och håller kvar gaserna från jästen.",
-        tip: "Tillsätt inte automatiskt mer mjöl bara för att degen känns lite kladdig. En för torr deg ger torra bullar.",
-      },
-      {
-        title: "Första jäsningen",
-        text: "Täck bunken och låt degen jäsa på en dragfri plats tills den ungefär fördubblats i storlek.",
-        tools: ["Bakduk eller plastfolie", "Bunke"],
-        timerSec: 2400,
-        why: "Jästen bildar koldioxid som fastnar i glutennätverket och gör degen luftig.",
-        tip: "Tiden är ungefärlig. Titta på degen – storleken är viktigare än klockan.",
-      },
-      {
-        title: "Kavla ut degen",
-        text: "Kavla ut degen till en rektangel på ett lätt mjölat bakbord.",
-        tools: ["Kavel", "Bakbord"],
-      },
-      {
-        title: "Gör fyllningen",
-        text: "Bred på rumsvarmt smör och strö över socker och kanel. Rulla ihop från långsidan.",
-        ingredients: [
-          { name: "Smör", amount: "ca 50 g av de 100 g" },
-          { name: "Socker", amount: "ca 0,5 dl av 1 dl" },
-          { name: "Kanel", amount: "2 msk" },
-        ],
-        tools: ["Slickepott eller smörkniv", "Måttsats"],
-        tip: "Lämna en liten kant fri så blir det enklare att försluta rullen.",
-      },
-      {
-        title: "Skär bullarna",
-        text: "Skär rullen i cirka 20 jämnstora bitar och lägg dem i bullformar eller på bakplåtspapper.",
-        tools: ["Vass kniv", "Bullformar", "Plåt"],
-        tip: "Använd gärna en bit sytråd för att skära bullarna utan att trycka ihop dem.",
-      },
-      {
-        title: "Andra jäsningen",
-        text: "Täck bullarna och låt dem jäsa igen tills de blivit tydligt större.",
-        tools: ["Bakduk", "Plåt"],
-        timerSec: 1800,
-        why: "Den andra jäsningen gör bullarna luftigare och mjukare.",
-      },
-      {
-        title: "Pensla och grädda",
-        text: "Pensla bullarna med uppvispat ägg och grädda tills de är gyllenbruna.",
-        ingredients: [
-          { name: "Ägg", amount: "1 st" },
-        ],
-        tools: ["Pensel", "Liten skål", "Ugn", "Grytvantar"],
-        temperature: "225°C",
-        timerSec: 540,
-        tip: "Lägg en bakduk över bullarna när de svalnar så håller de sig mjuka.",
+        tip: "👨‍🍳 Fuktiga smulor på provstickan är perfekt. Blöt smet betyder att de behöver mer tid.",
       },
     ],
   },
@@ -427,7 +322,7 @@ export const RECIPES: Recipe[] = [
     slug: "applepaj",
     name: "Äppelpaj",
     emoji: "🥧",
-    description: "Varm smulpaj med äpplen, kanel och krispigt täcke.",
+    description: "Smulpaj med kanel och syrliga äpplen.",
     minutes: 45,
     difficulty: "Lätt",
     portions: "6 portioner",
@@ -435,7 +330,7 @@ export const RECIPES: Recipe[] = [
     ingredients: [
       { key: "äpple", amount: "4 äpplen" },
       { key: "smör", amount: "125 g smör" },
-      { key: "mjöl", amount: "3 dl vetemjöl" },
+      { key: "mjöl", amount: "3 dl mjöl" },
       { key: "socker", amount: "1 dl socker" },
       { key: "kanel", amount: "1 msk kanel" },
       { key: "havregryn", amount: "1 dl havregryn" },
@@ -443,42 +338,45 @@ export const RECIPES: Recipe[] = [
 
     steps: [
       {
-        title: "Förbered ugnen och formen",
-        text: "Värm ugnen till 200°C och smörj en pajform.",
-        tools: ["Ugn", "Pajform", "Smörkniv eller pensel"],
-        temperature: "200°C",
+        title: "Värm ugnen till 200°C",
+        text: "Värm ugnen och smörj en pajform.",
+        tools: ["🔥 Ugn", "🥧 Pajform", "🖌️ Bakpensel"],
+        ingredients: [
+          { key: "smör", amount: "lite till formen" },
+        ],
       },
+
       {
         title: "Förbered äpplena",
-        text: "Skala om du vill, kärna ur och skiva äpplena. Lägg dem i formen och strö över kanel och en del av sockret.",
+        text: "Skala vid behov äpplena, kärna ur dem och skiva dem tunt. Lägg dem i pajformen och strö över kanel och lite av sockret.",
+        tools: ["🔪 Kniv", "🪵 Skärbräda", "🥧 Pajform", "🥄 Matsked"],
         ingredients: [
-          { name: "Äpplen", amount: "4 st" },
-          { name: "Kanel", amount: "1 msk" },
-          { name: "Socker", amount: "ca 0,5 dl" },
+          { key: "äpple", amount: "4 äpplen" },
+          { key: "kanel", amount: "1 msk" },
+          { key: "socker", amount: "lite av 1 dl" },
         ],
-        tools: ["Skärbräda", "Kniv", "Äppelurkärnare, valfritt"],
-        why: "Tunnare äppelskivor hinner mjukna ordentligt under gräddningen.",
+        why: "Tunna äppelskivor mjuknar i ungefär samma takt som smulet blir gyllenbrunt.",
       },
+
       {
         title: "Gör smulet",
-        text: "Nyp ihop kallt smör, mjöl, socker och havregryn till grova smulor.",
+        text: "Nyp ihop kallt smör, mjöl, socker och havregryn med händerna tills du får grova smulor.",
+        tools: ["🥣 Bunke", "🤲 Händerna"],
         ingredients: [
-          { name: "Smör", amount: "125 g, kallt" },
-          { name: "Vetemjöl", amount: "3 dl" },
-          { name: "Socker", amount: "ca 0,5 dl" },
-          { name: "Havregryn", amount: "1 dl" },
+          { key: "smör", amount: "125 g kallt" },
+          { key: "mjöl", amount: "3 dl" },
+          { key: "socker", amount: "1 dl" },
+          { key: "havregryn", amount: "1 dl" },
         ],
-        tools: ["Stor bunke", "Måttsats"],
-        why: "Kallt smör hjälper smulet att bli krispigt istället för kompakt.",
-        tip: "Nyp med fingertopparna och sluta när du har grova smulor – överarbeta inte.",
+        tip: "👨‍🍳 Kallt smör ger ett krispigare smul.",
       },
+
       {
-        title: "Grädda pajen",
-        text: "Fördela smulet jämnt över äpplena och grädda tills toppen är gyllenbrun och äpplena mjuka.",
-        tools: ["Pajform", "Ugn", "Grytvantar"],
-        temperature: "200°C",
+        title: "Grädda 25 minuter",
+        text: "Fördela smulet jämnt över äpplena och grädda tills ytan är gyllenbrun och äpplena mjuka.",
+        tools: ["🥧 Pajform", "🔥 Ugn", "🧤 Grytvante"],
+        ingredients: [],
         timerSec: 1500,
-        tip: "Låt pajen vila några minuter innan servering så hinner fyllningen tjockna lite.",
       },
     ],
   },
@@ -487,7 +385,7 @@ export const RECIPES: Recipe[] = [
     slug: "sockerkaka",
     name: "Sockerkaka",
     emoji: "🍰",
-    description: "En luftig klassiker som passar till nästan allt.",
+    description: "Ljuvligt luftig grundkaka som alltid funkar.",
     minutes: 50,
     difficulty: "Lätt",
     portions: "10 bitar",
@@ -495,63 +393,64 @@ export const RECIPES: Recipe[] = [
     ingredients: [
       { key: "ägg", amount: "3 ägg" },
       { key: "socker", amount: "2,5 dl socker" },
-      { key: "mjöl", amount: "3 dl vetemjöl" },
+      { key: "mjöl", amount: "3 dl mjöl" },
       { key: "bakpulver", amount: "2 tsk bakpulver" },
-      { key: "smör", amount: "75 g smör" },
+      { key: "smör", amount: "75 g smält smör" },
       { key: "mjölk", amount: "1 dl mjölk" },
       { key: "vaniljsocker", amount: "2 tsk vaniljsocker" },
     ],
 
     steps: [
       {
-        title: "Förbered ugnen och formen",
-        text: "Värm ugnen till 175°C. Smörj och bröa en sockerkaksform.",
-        tools: ["Ugn", "Sockerkaksform", "Pensel eller smörkniv"],
-        temperature: "175°C",
+        title: "Förbered formen",
+        text: "Smörj och bröa en sockerkaksform. Värm ugnen till 175°C.",
+        tools: ["🔥 Ugn", "🍰 Sockerkaksform", "🖌️ Bakpensel"],
+        ingredients: [
+          { key: "smör", amount: "lite till formen" },
+        ],
       },
+
       {
         title: "Vispa ägg och socker",
-        text: "Vispa ägg och socker riktigt ljust och pösigt, cirka 4 minuter.",
+        text: "Vispa ägg och socker riktigt pösigt och ljust i cirka 4 minuter.",
+        tools: ["🥣 Stor bunke", "⚡ Elvisp"],
         ingredients: [
-          { name: "Ägg", amount: "3 st" },
-          { name: "Socker", amount: "2,5 dl" },
+          { key: "ägg", amount: "3 ägg" },
+          { key: "socker", amount: "2,5 dl" },
         ],
-        tools: ["Stor bunke", "Elvisp"],
-        why: "Luften du vispar in hjälper till att bygga kakans struktur.",
-        tip: "Smeten ska vara så luftig att den faller tillbaka i ett tydligt band från vispen.",
+        why: "Luften som vispas in här är viktig för kakans luftiga struktur.",
+        tip: "👨‍🍳 Smeten ska rinna från vispen som ett tjockt band.",
       },
+
       {
-        title: "Blanda de torra ingredienserna",
-        text: "Blanda mjöl, bakpulver och vaniljsocker separat.",
+        title: "Blanda det torra",
+        text: "Blanda mjöl, bakpulver och vaniljsocker. Sikta sedan ner blandningen i äggsmeten.",
+        tools: ["🥣 Liten skål", "🥄 Sikt", "🥄 Slickepott"],
         ingredients: [
-          { name: "Vetemjöl", amount: "3 dl" },
-          { name: "Bakpulver", amount: "2 tsk" },
-          { name: "Vaniljsocker", amount: "2 tsk" },
+          { key: "mjöl", amount: "3 dl" },
+          { key: "bakpulver", amount: "2 tsk" },
+          { key: "vaniljsocker", amount: "2 tsk" },
         ],
-        tools: ["Mellanstor skål", "Visp eller sked"],
+        why: "Försiktig vändning hjälper dig behålla luften från vispningen.",
       },
-      {
-        title: "Vänd ner mjölet",
-        text: "Sikta ner de torra ingredienserna i äggsmeten och vänd försiktigt.",
-        tools: ["Sikt", "Slickepott"],
-        why: "För kraftig blandning kan slå ut luften som du byggt upp.",
-      },
+
       {
         title: "Tillsätt smör och mjölk",
-        text: "Smält smöret. Blanda det med mjölken och rör försiktigt ner blandningen i smeten.",
+        text: "Blanda det smälta smöret med mjölken och rör försiktigt ner det i smeten.",
+        tools: ["🥣 Bunke", "🥄 Slickepott", "🥄 Måttkopp"],
         ingredients: [
-          { name: "Smör", amount: "75 g" },
-          { name: "Mjölk", amount: "1 dl" },
+          { key: "smör", amount: "75 g smält" },
+          { key: "mjölk", amount: "1 dl" },
         ],
-        tools: ["Kastrull", "Måttkanna", "Slickepott"],
       },
+
       {
-        title: "Grädda",
-        text: "Häll smeten i formen och grädda i nedre delen av ugnen. Undvik att öppna ugnsluckan tidigt.",
-        tools: ["Sockerkaksform", "Ugn", "Grytvantar", "Provsticka"],
-        temperature: "175°C",
+        title: "Grädda 35 minuter",
+        text: "Häll smeten i formen och grädda i nedre delen av ugnen.",
+        tools: ["🍰 Sockerkaksform", "🔥 Ugn", "🧤 Grytvante", "🪵 Provsticka"],
+        ingredients: [],
         timerSec: 2100,
-        tip: "Öppna helst inte ugnen under de första 20 minuterna eftersom kakan då kan sjunka.",
+        tip: "👨‍🍳 Öppna inte ugnen under de första 20 minuterna.",
       },
     ],
   },
@@ -560,7 +459,7 @@ export const RECIPES: Recipe[] = [
     slug: "havrekakor",
     name: "Havrekakor",
     emoji: "🥮",
-    description: "Frasiga och enkla havrekakor.",
+    description: "Frasiga havrekakor med bara några ingredienser.",
     minutes: 25,
     difficulty: "Lätt",
     portions: "20 kakor",
@@ -569,46 +468,57 @@ export const RECIPES: Recipe[] = [
       { key: "havregryn", amount: "3 dl havregryn" },
       { key: "smör", amount: "100 g smör" },
       { key: "socker", amount: "1,5 dl socker" },
-      { key: "mjöl", amount: "1 dl vetemjöl" },
+      { key: "mjöl", amount: "1 dl mjöl" },
       { key: "bakpulver", amount: "1 tsk bakpulver" },
       { key: "ägg", amount: "1 ägg" },
     ],
 
     steps: [
       {
-        title: "Förbered ugnen",
-        text: "Värm ugnen till 175°C och täck en plåt med bakplåtspapper.",
-        tools: ["Ugn", "Plåt", "Bakplåtspapper"],
-        temperature: "175°C",
+        title: "Värm ugnen till 175°C",
+        text: "Lägg bakplåtspapper på en plåt.",
+        tools: ["🔥 Ugn", "🍪 Bakplåt", "📄 Bakplåtspapper"],
+        ingredients: [],
       },
+
       {
-        title: "Blanda smör, socker och ägg",
-        text: "Rör ihop det smälta smöret, sockret och ägget.",
+        title: "Smält smöret",
+        text: "Smält smöret försiktigt och låt det svalna något.",
+        tools: ["🍴 Kastrull", "🔥 Spis"],
         ingredients: [
-          { name: "Smör", amount: "100 g, smält" },
-          { name: "Socker", amount: "1,5 dl" },
-          { name: "Ägg", amount: "1 st" },
+          { key: "smör", amount: "100 g" },
         ],
-        tools: ["Bunke", "Visp"],
       },
+
       {
-        title: "Tillsätt havre och mjöl",
-        text: "Rör ner havregryn, mjöl och bakpulver. Låt smeten vila några minuter.",
+        title: "Blanda smeten",
+        text: "Rör ihop smör, socker och ägg. Blanda sedan ner havregryn, mjöl och bakpulver.",
+        tools: ["🥣 Bunke", "🥄 Slickepott"],
         ingredients: [
-          { name: "Havregryn", amount: "3 dl" },
-          { name: "Vetemjöl", amount: "1 dl" },
-          { name: "Bakpulver", amount: "1 tsk" },
+          { key: "socker", amount: "1,5 dl" },
+          { key: "ägg", amount: "1 ägg" },
+          { key: "havregryn", amount: "3 dl" },
+          { key: "mjöl", amount: "1 dl" },
+          { key: "bakpulver", amount: "1 tsk" },
         ],
-        tools: ["Slickepott", "Måttsats"],
-        why: "Havregryn behöver lite tid för att absorbera vätskan.",
+        why: "Havregrynen behöver lite tid för att suga upp vätskan.",
       },
+
       {
-        title: "Forma och grädda",
-        text: "Klicka ut små klickar med gott om plats mellan dem. Grädda tills kanterna är gyllene.",
-        tools: ["Sked", "Plåt", "Ugn", "Grytvantar"],
-        temperature: "175°C",
+        title: "Låt degen vila",
+        text: "Låt degen stå i cirka 5 minuter innan du formar kakorna.",
+        tools: ["🥣 Bunke", "⏱️ Timer"],
+        ingredients: [],
+        timerSec: 300,
+      },
+
+      {
+        title: "Grädda 10 minuter",
+        text: "Klicka ut små klickar på plåten med gott om mellanrum och grädda tills kakorna fått färg.",
+        tools: ["🍪 Bakplåt", "🥄 Sked", "🔥 Ugn", "🧤 Grytvante"],
+        ingredients: [],
         timerSec: 600,
-        tip: "Kakorna stelnar när de svalnar, så låt dem ligga kvar på plåten en stund efter ugnen.",
+        tip: "👨‍🍳 Låt kakorna stelna på plåten innan du flyttar dem.",
       },
     ],
   },
@@ -617,7 +527,7 @@ export const RECIPES: Recipe[] = [
     slug: "kokostoppar",
     name: "Kokostoppar",
     emoji: "🥥",
-    description: "Enkla kokostoppar med få ingredienser.",
+    description: "Fem ingredienser, noll krångel, maximal mysfaktor.",
     minutes: 25,
     difficulty: "Lätt",
     portions: "18 toppar",
@@ -626,49 +536,62 @@ export const RECIPES: Recipe[] = [
       { key: "kokos", amount: "4 dl kokosflingor" },
       { key: "socker", amount: "1 dl socker" },
       { key: "ägg", amount: "2 ägg" },
-      { key: "smör", amount: "50 g smör" },
+      { key: "smör", amount: "50 g smält smör" },
       { key: "vaniljsocker", amount: "1 tsk vaniljsocker" },
     ],
 
     steps: [
       {
-        title: "Värm ugnen",
-        text: "Värm ugnen till 175°C och lägg bakplåtspapper på en plåt.",
-        tools: ["Ugn", "Plåt", "Bakplåtspapper"],
-        temperature: "175°C",
+        title: "Sätt ugnen på 175°C",
+        text: "Lägg bakplåtspapper på plåten.",
+        tools: ["🔥 Ugn", "🍪 Bakplåt", "📄 Bakplåtspapper"],
+        ingredients: [],
       },
+
       {
-        title: "Blanda ägg och socker",
-        text: "Rör ihop ägg, socker och vaniljsocker. Det behöver inte vispas luftigt.",
+        title: "Smält smöret",
+        text: "Smält smöret försiktigt och låt det svalna lite.",
+        tools: ["🍴 Kastrull", "🔥 Spis"],
         ingredients: [
-          { name: "Ägg", amount: "2 st" },
-          { name: "Socker", amount: "1 dl" },
-          { name: "Vaniljsocker", amount: "1 tsk" },
+          { key: "smör", amount: "50 g" },
         ],
-        tools: ["Bunke", "Visp"],
       },
+
       {
-        title: "Tillsätt kokos och smör",
-        text: "Rör ner kokosflingor och smält smör. Låt blandningen stå cirka 10 minuter.",
+        title: "Rör ihop smeten",
+        text: "Blanda ägg, socker och vaniljsocker. Rör sedan ner kokos och det smälta smöret.",
+        tools: ["🥣 Bunke", "🥄 Handvisp", "🥄 Slickepott"],
         ingredients: [
-          { name: "Kokosflingor", amount: "4 dl" },
-          { name: "Smör", amount: "50 g, smält" },
+          { key: "ägg", amount: "2 ägg" },
+          { key: "socker", amount: "1 dl" },
+          { key: "vaniljsocker", amount: "1 tsk" },
+          { key: "kokos", amount: "4 dl" },
+          { key: "smör", amount: "50 g smält" },
         ],
-        tools: ["Slickepott", "Kastrull"],
-        why: "Kokosen hinner absorbera vätskan och topparna blir lättare att forma.",
+        why: "Kokosen behöver suga upp en del av vätskan så topparna håller formen.",
       },
+
+      {
+        title: "Låt smeten svälla",
+        text: "Låt smeten stå i cirka 10 minuter.",
+        tools: ["🥣 Bunke", "⏱️ Timer"],
+        ingredients: [],
+        timerSec: 600,
+      },
+
       {
         title: "Forma topparna",
-        text: "Forma små toppar med två teskedar och lägg dem på plåten.",
-        tools: ["Två teskedar", "Plåt"],
+        text: "Forma cirka 18 små toppar med hjälp av två teskedar och lägg dem på plåten.",
+        tools: ["🥄 2 teskedar", "🍪 Bakplåt", "📄 Bakplåtspapper"],
+        ingredients: [],
       },
+
       {
-        title: "Grädda",
-        text: "Grädda tills topparna fått en gyllene färg.",
-        tools: ["Ugn", "Grytvantar"],
-        temperature: "175°C",
+        title: "Grädda 12 minuter",
+        text: "Grädda tills topparna fått en fin gyllene färg.",
+        tools: ["🔥 Ugn", "🍪 Bakplåt", "🧤 Grytvante"],
+        ingredients: [],
         timerSec: 720,
-        tip: "Låt dem svalna innan du flyttar dem från plåten eftersom de är mjuka när de är varma.",
       },
     ],
   },
@@ -677,7 +600,7 @@ export const RECIPES: Recipe[] = [
     slug: "banankaka",
     name: "Banankaka",
     emoji: "🍌",
-    description: "Saftig kaka och perfekt sätt att använda mogna bananer.",
+    description: "Perfekt räddning för överblivna bananer.",
     minutes: 60,
     difficulty: "Lätt",
     portions: "10 bitar",
@@ -687,55 +610,61 @@ export const RECIPES: Recipe[] = [
       { key: "socker", amount: "2 dl socker" },
       { key: "smör", amount: "100 g smör" },
       { key: "ägg", amount: "2 ägg" },
-      { key: "mjöl", amount: "4 dl vetemjöl" },
+      { key: "mjöl", amount: "4 dl mjöl" },
       { key: "bakpulver", amount: "2 tsk bakpulver" },
       { key: "kanel", amount: "1 tsk kanel" },
     ],
 
     steps: [
       {
+        title: "Förbered ugnen",
+        text: "Värm ugnen till 175°C och smörj en form.",
+        tools: ["🔥 Ugn", "🍰 Bakform", "🖌️ Bakpensel"],
+        ingredients: [
+          { key: "smör", amount: "lite till formen" },
+        ],
+      },
+
+      {
         title: "Mosa bananerna",
         text: "Skala bananerna och mosa dem med en gaffel till en grov puré.",
+        tools: ["🥣 Bunke", "🍴 Gaffel"],
         ingredients: [
-          { name: "Mogna bananer", amount: "3 st" },
+          { key: "banan", amount: "3 mogna bananer" },
         ],
-        tools: ["Bunke", "Gaffel"],
-        why: "Mogna bananer innehåller mer socker och ger både smak och saftighet.",
-        tip: "Ju mer brunprickiga bananerna är, desto mer smak får kakan.",
+        why: "Mogna bananer innehåller mer naturligt socker och ger en saftigare kaka.",
       },
+
       {
-        title: "Blanda smör, socker och ägg",
-        text: "Rör ihop smält smör och socker. Tillsätt äggen ett i taget.",
+        title: "Blanda det blöta",
+        text: "Rör ihop smält smör, socker och ägg. Tillsätt sedan bananmoset.",
+        tools: ["🥣 Stor bunke", "🥄 Slickepott", "🥄 Handvisp"],
         ingredients: [
-          { name: "Smör", amount: "100 g, smält" },
-          { name: "Socker", amount: "2 dl" },
-          { name: "Ägg", amount: "2 st" },
+          { key: "smör", amount: "100 g smält" },
+          { key: "socker", amount: "2 dl" },
+          { key: "ägg", amount: "2 ägg" },
+          { key: "banan", amount: "3 mosade bananer" },
         ],
-        tools: ["Stor bunke", "Visp"],
       },
+
       {
-        title: "Tillsätt bananerna",
-        text: "Rör ner bananmoset tills blandningen är jämn.",
-        tools: ["Slickepott"],
-      },
-      {
-        title: "Blanda de torra ingredienserna",
-        text: "Blanda mjöl, bakpulver och kanel. Vänd sedan ner blandningen i smeten.",
+        title: "Blanda det torra",
+        text: "Blanda mjöl, bakpulver och kanel och rör ner i smeten precis tills allt är blandat.",
+        tools: ["🥣 Liten skål", "🥄 Slickepott"],
         ingredients: [
-          { name: "Vetemjöl", amount: "4 dl" },
-          { name: "Bakpulver", amount: "2 tsk" },
-          { name: "Kanel", amount: "1 tsk" },
+          { key: "mjöl", amount: "4 dl" },
+          { key: "bakpulver", amount: "2 tsk" },
+          { key: "kanel", amount: "1 tsk" },
         ],
-        tools: ["Mellanstor skål", "Slickepott"],
-        why: "När mjölet blandas in ska du arbeta så lite som möjligt för att behålla en mjuk kaka.",
+        tip: "👨‍🍳 Rör inte mer än nödvändigt – för mycket rörning kan ge en seg kaka.",
       },
+
       {
-        title: "Grädda",
-        text: "Häll smeten i en smord form och grädda tills kakan är genomgräddad.",
-        tools: ["Bakform", "Ugn", "Grytvantar", "Provsticka"],
-        temperature: "175°C",
+        title: "Grädda 45 minuter",
+        text: "Häll smeten i formen och grädda i nedre delen av ugnen.",
+        tools: ["🍰 Bakform", "🔥 Ugn", "🧤 Grytvante", "🪵 Provsticka"],
+        ingredients: [],
         timerSec: 2700,
-        tip: "Eftersom bananer innehåller mycket vätska kan kakan behöva lite längre tid än en vanlig sockerkaka.",
       },
     ],
   },
@@ -744,7 +673,7 @@ export const RECIPES: Recipe[] = [
     slug: "brownies",
     name: "Brownies",
     emoji: "🟫",
-    description: "Fudgiga chokladrutor med tunn, knäckig yta.",
+    description: "Fudgiga rutor med knäckig yta.",
     minutes: 40,
     difficulty: "Medel",
     portions: "16 rutor",
@@ -754,7 +683,7 @@ export const RECIPES: Recipe[] = [
       { key: "smör", amount: "150 g smör" },
       { key: "socker", amount: "3 dl socker" },
       { key: "ägg", amount: "3 ägg" },
-      { key: "mjöl", amount: "1,5 dl vetemjöl" },
+      { key: "mjöl", amount: "1,5 dl mjöl" },
       { key: "kakao", amount: "2 msk kakao" },
       { key: "salt", amount: "0,5 tsk salt" },
     ],
@@ -763,61 +692,164 @@ export const RECIPES: Recipe[] = [
       {
         title: "Förbered ugnen",
         text: "Värm ugnen till 175°C och klä en fyrkantig form med bakplåtspapper.",
-        tools: ["Ugn", "Fyrkantig bakform", "Bakplåtspapper"],
-        temperature: "175°C",
+        tools: ["🔥 Ugn", "🍰 Fyrkantig bakform", "📄 Bakplåtspapper"],
+        ingredients: [],
       },
+
       {
         title: "Smält choklad och smör",
-        text: "Smält choklad och smör försiktigt tillsammans. Låt blandningen svalna lite.",
+        text: "Smält choklad och smör tillsammans över vattenbad eller på mycket låg värme. Låt blandningen svalna något.",
+        tools: ["🍫 Vattenbad", "🍴 Kastrull", "🥄 Slickepott"],
         ingredients: [
-          { name: "Mörk choklad", amount: "200 g" },
-          { name: "Smör", amount: "150 g" },
+          { key: "choklad", amount: "200 g" },
+          { key: "smör", amount: "150 g" },
         ],
-        tools: ["Kastrull", "Värmetålig skål", "Slickepott"],
-        why: "Försiktig uppvärmning minskar risken att chokladen bränns eller skär sig.",
+        why: "Försiktig uppvärmning minskar risken att chokladen bränner eller blir grynig.",
       },
+
       {
         title: "Vispa ägg och socker",
-        text: "Vispa ägg och socker tills blandningen blir ljus och tjock.",
+        text: "Vispa ägg och socker i cirka 4–5 minuter tills blandningen är ljus och tjock.",
+        tools: ["🥣 Stor bunke", "⚡ Elvisp"],
         ingredients: [
-          { name: "Ägg", amount: "3 st" },
-          { name: "Socker", amount: "3 dl" },
+          { key: "ägg", amount: "3 ägg" },
+          { key: "socker", amount: "3 dl" },
         ],
-        tools: ["Stor bunke", "Elvisp"],
-        why: "Den här vispningen bidrar till browniesens tunna, blanka yta.",
-        tip: "Du behöver inte vispa lika länge som till en sockerkaka, men blandningen ska bli tydligt ljusare.",
+        why: "Det här hjälper till att skapa browniesens tunna, glansiga och knäckiga yta.",
       },
+
       {
-        title: "Blanda chokladen",
-        text: "Rör försiktigt ner den avsvalnade chokladblandningen i äggsmeten.",
-        tools: ["Slickepott"],
-      },
-      {
-        title: "Vänd ner mjöl och kakao",
-        text: "Sikta ner mjöl och kakao tillsammans med salt. Vänd försiktigt tills smeten precis är jämn.",
+        title: "Blanda ihop allt",
+        text: "Rör ner chokladblandningen. Sikta sedan ner mjöl, kakao och salt och rör försiktigt ihop.",
+        tools: ["🥣 Bunke", "🥄 Sikt", "🥄 Slickepott"],
         ingredients: [
-          { name: "Vetemjöl", amount: "1,5 dl" },
-          { name: "Kakao", amount: "2 msk" },
-          { name: "Salt", amount: "0,5 tsk" },
+          { key: "mjöl", amount: "1,5 dl" },
+          { key: "kakao", amount: "2 msk" },
+          { key: "salt", amount: "0,5 tsk" },
         ],
-        tools: ["Sikt", "Slickepott"],
-        why: "För mycket blandning efter mjölet gör brownies mindre fudgiga.",
       },
+
       {
-        title: "Grädda",
+        title: "Grädda 22 minuter",
         text: "Häll smeten i formen och grädda tills kanterna är fasta men mitten fortfarande är mjuk.",
-        tools: ["Bakform", "Ugn", "Grytvantar"],
-        temperature: "175°C",
+        tools: ["🍰 Bakform", "🔥 Ugn", "🧤 Grytvante"],
+        ingredients: [],
         timerSec: 1320,
-        tip: "Låt brownies svalna helt innan du skär dem. För extra rena bitar kan du kyla dem först.",
+        tip: "👨‍🍳 Låt brownien svalna helt innan du skär den – då blir bitarna mycket snyggare.",
+      },
+    ],
+  },
+
+  {
+    slug: "kanelbullar",
+    name: "Kanelbullar",
+    emoji: "🌀",
+    description: "Klassiska jästa bullar med kanelfyllning.",
+    minutes: 120,
+    difficulty: "Medel",
+    portions: "20 bullar",
+
+    ingredients: [
+      { key: "mjölk", amount: "3 dl mjölk" },
+      { key: "jäst", amount: "25 g färsk jäst" },
+      { key: "smör", amount: "100 g smör" },
+      { key: "socker", amount: "1 dl socker" },
+      { key: "mjöl", amount: "9 dl mjöl" },
+      { key: "kanel", amount: "2 msk kanel" },
+      { key: "salt", amount: "0,5 tsk salt" },
+      { key: "ägg", amount: "1 ägg till pensling" },
+    ],
+
+    steps: [
+      {
+        title: "Värm mjölken",
+        text: "Värm mjölken till cirka 37°C och blanda i smöret.",
+        tools: ["🍴 Kastrull", "🔥 Spis", "🌡️ Termometer"],
+        ingredients: [
+          { key: "mjölk", amount: "3 dl" },
+          { key: "smör", amount: "100 g" },
+        ],
+        why: "Jäst trivs bäst i fingervarm vätska. För hög temperatur kan skada jästen.",
+      },
+
+      {
+        title: "Rör ut jästen",
+        text: "Smula jästen i en stor bunke. Häll över den ljumma vätskan och rör tills jästen löst sig.",
+        tools: ["🥣 Stor bunke", "🥄 Träslev"],
+        ingredients: [
+          { key: "jäst", amount: "25 g" },
+        ],
+      },
+
+      {
+        title: "Tillsätt socker och salt",
+        text: "Rör ner socker och salt.",
+        tools: ["🥣 Bunke", "🥄 Matsked", "🥄 Tesked"],
+        ingredients: [
+          { key: "socker", amount: "1 dl" },
+          { key: "salt", amount: "0,5 tsk" },
+        ],
+      },
+
+      {
+        title: "Arbeta in mjölet",
+        text: "Tillsätt mjölet lite i taget och knåda degen smidig i cirka 8–10 minuter.",
+        tools: ["🥣 Stor bunke", "🤲 Händerna eller köksmaskin"],
+        ingredients: [
+          { key: "mjöl", amount: "9 dl" },
+        ],
+        why: "Knådningen bygger glutennätverket som hjälper degen att hålla kvar gaserna från jästen.",
+      },
+
+      {
+        title: "Första jäsningen",
+        text: "Täck bunken med en bakduk och låt degen jäsa på en varm och dragfri plats tills den ungefär har dubblat sin storlek.",
+        tools: ["🥣 Bunke", "🧺 Bakduk", "⏱️ Timer"],
+        ingredients: [],
+        timerSec: 2400,
+        tip: "👨‍🍳 Tryck försiktigt ett finger i degen. Om gropen långsamt kommer tillbaka är den redo.",
+      },
+
+      {
+        title: "Kavla ut degen",
+        text: "Kavla ut degen till en rektangel på ett lätt mjölat underlag.",
+        tools: ["🥖 Kavel", "🪵 Bakbord"],
+        ingredients: [],
+      },
+
+      {
+        title: "Fyll och rulla",
+        text: "Bred på rumsvarmt smör och strö över socker och kanel. Rulla ihop degen och skär cirka 20 bullar.",
+        tools: ["🥄 Slickepott", "🔪 Kniv", "🪵 Skärbräda"],
+        ingredients: [
+          { key: "smör", amount: "cirka 50 g till fyllningen" },
+          { key: "socker", amount: "cirka 0,5 dl till fyllningen" },
+          { key: "kanel", amount: "2 msk" },
+        ],
+      },
+
+      {
+        title: "Andra jäsningen",
+        text: "Lägg bullarna i formar på en plåt och låt dem jäsa under bakduk i cirka 30 minuter.",
+        tools: ["🍪 Bakplåt", "🧁 Bullformar", "🧺 Bakduk", "⏱️ Timer"],
+        ingredients: [],
+        timerSec: 1800,
+        why: "Den andra jäsningen gör bullarna luftigare och mjukare.",
+      },
+
+      {
+        title: "Pensla och grädda",
+        text: "Pensla bullarna med uppvispat ägg och grädda i 225°C i cirka 8–10 minuter.",
+        tools: ["🖌️ Bakpensel", "🥣 Liten skål", "🔥 Ugn", "🍪 Bakplåt", "🧤 Grytvante"],
+        ingredients: [
+          { key: "ägg", amount: "1 ägg till pensling" },
+        ],
+        timerSec: 540,
+        tip: "👨‍🍳 Lägg en bakduk över bullarna direkt efter gräddning så håller de sig mjuka.",
       },
     ],
   },
 ];
-
-/* ---------------------------------------------------------
-   Hjälpfunktioner
---------------------------------------------------------- */
 
 export function normalize(value: string): string {
   return value.trim().toLowerCase();
@@ -858,7 +890,7 @@ export function matchRecipes(pantry: string[]): Match[] {
 
   return RECIPES.map((recipe) => {
     const missing = recipe.ingredients.filter(
-      (ingredient) => !have.has(canonical(ingredient.key))
+      (ingredient) => !have.has(canonical(ingredient.key)),
     );
 
     const haveCount = recipe.ingredients.length - missing.length;
@@ -872,13 +904,15 @@ export function matchRecipes(pantry: string[]): Match[] {
   }).sort(
     (a, b) =>
       b.ratio - a.ratio ||
-      a.recipe.minutes - b.recipe.minutes
+      a.recipe.minutes - b.recipe.minutes,
   );
 }
 
 export function missingLabel(missing: number): string {
   if (missing === 0) return "Du har allt hemma";
+
   if (missing === 1) return "Du saknar 1 ingrediens";
+
   return `Du saknar ${missing} ingredienser`;
 }
 
