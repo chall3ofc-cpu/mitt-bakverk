@@ -288,5 +288,5 @@ export function getLesson(slug: string): Lesson | undefined {
 /** Dagens lektion – deterministiskt baserat på datum */
 export function lessonOfTheDay(): Lesson {
   const day = Math.floor(Date.now() / 86_400_000);
-  return LESSONS[day % LESSONS.length];
+  return LESSONS[day % LESSONS.length]!;
 }
