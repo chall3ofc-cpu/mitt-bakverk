@@ -108,14 +108,10 @@ export function useStore(): State {
 
 /** True först efter att localStorage lästs in – används för att undvika hydration-glitch. */
 export function useHydrated(): boolean {
-  const [hydrated, setHydrated] = useSyncExternalStore(
-    subscribe,
-    () => [loaded, () => {}] as [boolean, () => void],
-    () => [false, () => {}] as [boolean, () => void],
-  );
-  void setHydrated;
+  const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
     load();
+    setHydrated(true);
   }, []);
   return hydrated;
 }
